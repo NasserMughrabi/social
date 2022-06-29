@@ -1,10 +1,12 @@
 import React from 'react'
-import Post from './Post';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Profile from './Profile';
 
 const Main = () => {
     // send http request to the server/database to get the needed data (in this case: all posts)
     const [allposts, setAllPosts] = useState([]);
+    const [showProfile, setShowProfile] = useState(false);
+    const [profileUsername, setProfileUsername] = useState('');
 
     useEffect( async () => {
         try{
@@ -17,6 +19,14 @@ const Main = () => {
         
     }, allposts)
 
+    const handleProfileClick = (username) => {
+        setProfileUsername(username)
+        setShowProfile(true);
+    }
+
+    if(showProfile){
+        return <Profile username={profileUsername} />
+    }
     return (
         <>
             <div id="new-post">
@@ -26,8 +36,25 @@ const Main = () => {
                 </form>
             </div>
             {allposts.map(post => {
+                const {id, username, content, date_posted, likes_num} = post;
                 return (
-                    <Post {...post}/>
+                    <div key={id} className="post-div">
+                        <div className="username" onClick={()=>{handleProfileClick(username)}}>
+                            {username}
+                        </div> 
+                        <div className="content"> 
+                            {content} 
+                        </div>
+                        <div className="date"> 
+                            {date_posted}  
+                        </div>
+                        <div className="like">
+                            <button>Like</button>
+                        </div>
+                        <div className="likes" >
+                            <div>{likes_num}</div>
+                        </div>
+                    </div>
                 );
             })}
         </>
