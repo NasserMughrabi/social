@@ -1,6 +1,9 @@
 import React from 'react'
+import Navbar from './Navbar';
+import Followings from './Followings';
 import Login from './Login';
 import { useState } from 'react';
+
 
 const Register = () => {
 
@@ -9,11 +12,22 @@ const Register = () => {
         setShowRegister(false);
     }
 
+    const [showComponent, setShowComponent] = useState('');
+    if(showComponent){
+        if (showComponent === 'Login'){
+            return <Login />;
+        } else if (showComponent === 'Followings') {
+            return <Followings />;
+        } else if (showComponent === 'Register') {
+            return <Register />;
+        }
+    }
     if(!showRegister){
-        return <Login />
+        return <Login />;
     }
     return (
         <>
+            <Navbar username={''} setShowComponent={setShowComponent}/>
             <h2>Register</h2>
             <form action="{% url 'register' %}" method="post">
                 <div class="form-group">

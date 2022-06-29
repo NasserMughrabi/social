@@ -1,12 +1,17 @@
 import React from 'react'
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import Navbar from './Navbar';
+import Followings from './Followings';
+import Login from './Login';
+import Register from './Register';
 import Profile from './Profile';
 
-const Main = () => {
+const Main = ({username}) => {
     // send http request to the server/database to get the needed data (in this case: all posts)
     const [allposts, setAllPosts] = useState([]);
     const [showProfile, setShowProfile] = useState(false);
     const [profileUsername, setProfileUsername] = useState('');
+    const [showComponent, setShowComponent] = useState('');
 
     useEffect( async () => {
         try{
@@ -24,11 +29,22 @@ const Main = () => {
         setShowProfile(true);
     }
 
+    if(showComponent){
+        if (showComponent === 'Login'){
+            return <Login />;
+        } else if (showComponent === 'Followings') {
+            return <Followings />;
+        } else if (showComponent === 'Register') {
+            return <Register />;
+        }
+    }
+
     if(showProfile){
-        return <Profile username={profileUsername} />
+        return <Profile username={profileUsername} />;
     }
     return (
         <>
+            <Navbar username={username} setShowComponent={setShowComponent}/>
             <div id="new-post">
                 <form id="new-post-form">
                     <textarea className="form-control" name="post-content" id="post-content" placeholder="New Post" rows="4"></textarea>

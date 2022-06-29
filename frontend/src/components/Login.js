@@ -1,6 +1,8 @@
 import React from 'react'
-import Register from './Register';
+import Navbar from './Navbar';
+import Followings from './Followings';
 import Main from './Main';
+import Register from './Register'
 import { useState, useRef } from 'react';
 import CSRFToken from './CSRFToken';
 
@@ -8,6 +10,8 @@ const Login = () => {
 
     const [loginStatus, setLoginStatus] = useState('');
     const [showRegister, setShowRegister] = useState(false);
+    const [showComponent, setShowComponent] = useState('');
+    const [username, setUsername] = useState('');
     const usernameEl = useRef(null);
     const passwordEl = useRef(null);
     const handleClick = () => {
@@ -17,6 +21,7 @@ const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         const username = usernameEl.current.value;
+        setUsername(username);
         const password = passwordEl.current.value;
         fetch('api/login', {
                 method: 'POST',
@@ -29,16 +34,26 @@ const Login = () => {
             .then(result => {setLoginStatus(result)});
     }
 
-    if(loginStatus === 'success'){
-        return <Main />
+    if(showComponent){
+        if (showComponent === 'Login'){
+            return <Login />;
+        } else if (showComponent === 'Followings') {
+            return <Followings />;
+        } else if (showComponent === 'Register') {
+            return <Register />;
+        }
     }
+    if(loginStatus === 'success'){
+        return <Main username={username}/>
+    } 
     if(showRegister){
         return <Register />;
     }
     return (
     <>
+        <Navbar username={''} setShowComponent={setShowComponent}/>
         <h2>Login</h2>
-        {loginStatus === 'fail' && <h4>Incorrect username and/or password</h4>}
+        {loginStatus === 'fail' && <div style={{color: 'red'}}>Incorrect username and/or password</div>}
         <form action="" method="post"  onSubmit={handleSubmit}>
             <CSRFToken />
             <div class="form-group">
