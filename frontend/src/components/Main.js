@@ -1,58 +1,97 @@
 import React from 'react'
-import { useState, useEffect } from 'react';
-import Navbar from './Navbar';
-import Followings from './Followings';
-import Login from './Login';
-import Register from './Register';
-import Profile from './Profile';
+import { useState, useEffect, useRef } from 'react';
+import CSRFToken from './CSRFToken';
 
-const Main = ({username}) => {
-    // send http request to the server/database to get the needed data (in this case: all posts)
+const Main = ({logUsername, setShowComponent, setUsername}) => {
+
     const [allposts, setAllPosts] = useState([]);
-    const [showProfile, setShowProfile] = useState(false);
-    const [profileUsername, setProfileUsername] = useState('');
-    const [showComponent, setShowComponent] = useState('');
-
-    useEffect( async () => {
-        try{
-            const response = await fetch('api/allposts');
-            const posts = await response.json();
-            setAllPosts(posts);
-        } catch(exception) {
-            console.log('ERROR! fetching incorrect URL');
-        }
-        
-    }, allposts)
+    useEffect(() => {
+        fetch('api/allposts')
+        .then(response => response.json())
+        .then(posts => {setAllPosts(posts);})
+        .catch(err => console.log(err));
+    }, [allposts])
 
     const handleProfileClick = (username) => {
-        setProfileUsername(username)
-        setShowProfile(true);
+        setUsername(username);
+        setShowComponent('Profile');
     }
 
-    if(showComponent){
-        if (showComponent === 'Login'){
-            return <Login />;
-        } else if (showComponent === 'Followings') {
-            return <Followings />;
-        } else if (showComponent === 'Register') {
-            return <Register />;
+    const contentEl = useRef(null);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        fetch('api/new_post', {
+            method: 'POST',
+            body: JSON.stringify({
+                content: contentEl.current.value  
+            })
+        })
+        .then(response => response.json())
+        .then(result => console.log(result))
+        .catch(err => console.log(err));
+        setShowComponent('Main');
+    }
+
+
+    const [allLiked, setAllLiked] = useState([]);
+    const [liked, setLiked] = useState(false);
+    useEffect(()=>{
+        fetch('api/like')
+            .then(response => response.json())
+            .then(result => setAllLiked(result))
+            .catch(err => console.log(err));
+    }, [allLiked])
+    
+
+
+    const handleLike = (id, text) => {
+        if(text === 'unlike'){
+            // remove from Like table
+            fetch('api/remove_like', {
+                method: 'POST',
+                body: JSON.stringify({
+                    post_id: id,
+                })
+            })
+            .then(response => response.json())
+            .then(result => setLiked(false))
+            .catch(err => console.log(err));
+            
+        }  else {
+            // add to Like table/model
+            fetch('api/add_like', {
+                method: 'POST',
+                body: JSON.stringify({
+                    post_id: id,
+                })
+            })
+            .then(response => response.json())
+            .then(result => setLiked(true))
+            .catch(err => console.log(err));
         }
+        
     }
+    
 
-    if(showProfile){
-        return <Profile username={profileUsername} />;
-    }
     return (
-        <>
-            <Navbar username={username} setShowComponent={setShowComponent}/>
-            <div id="new-post">
-                <form id="new-post-form">
-                    <textarea className="form-control" name="post-content" id="post-content" placeholder="New Post" rows="4"></textarea>
-                    <input className="btn btn-primary mb-2" id="post-submit" type="submit" value="Post"></input>
-                </form>
-            </div>
+    <>  
+        <div id="new-post">
+            <form id="new-post-form" onSubmit={handleSubmit}>
+                <CSRFToken />
+                <textarea ref={contentEl} className="form-control" name="post-content" id="post-content" placeholder="New Post" rows="4"></textarea>
+                <input className="btn btn-primary mb-2" id="post-submit" type="submit" value="Post"></input>
+            </form>
+        </div>
+        <div id="all-posts">
             {allposts.map(post => {
                 const {id, username, content, date_posted, likes_num} = post;
+                let likedPost = false;
+                for(let i=0; i<allLiked.length; i++){
+                    if(allLiked[i].liked_post_id === id && allLiked[i].username === logUsername){
+                        likedPost = true;
+                        break;
+                    }
+                }
                 return (
                     <div key={id} className="post-div">
                         <div className="username" onClick={()=>{handleProfileClick(username)}}>
@@ -65,7 +104,7 @@ const Main = ({username}) => {
                             {date_posted}  
                         </div>
                         <div className="like">
-                            <button>Like</button>
+                            {likedPost ? <button onClick={()=>{handleLike(id, 'unlike')}}>Unlike</button>:<button onClick={()=>{handleLike(id, 'like')}}>Like</button> }
                         </div>
                         <div className="likes" >
                             <div>{likes_num}</div>
@@ -73,8 +112,9 @@ const Main = ({username}) => {
                     </div>
                 );
             })}
-        </>
-    );
+        </div>
+    </>
+    )
 }
 
 export default Main

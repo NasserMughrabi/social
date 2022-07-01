@@ -1,15 +1,40 @@
 import Login from './components/Login'
+import Register from './components/Register';
+import Main from './components/Main';
+import Profile from './components/Profile';
+import Followings from './components/Followings';
 import Navbar from './components/Navbar';
+import { useState } from 'react'
 
 function App() {
+
+  const [showComponent, setShowComponent] = useState('');
+  const [username, setUsername] = useState('');
+  const [logUsername, setLogUsername] = useState('');
+  let component = <Login setLogUsername={setLogUsername} setShowComponent={setShowComponent} setUsername={setUsername} />;
+
+  if(showComponent){
+    if (showComponent === 'Main'){
+      component = <Main logUsername={logUsername} setShowComponent={setShowComponent} setUsername={setUsername} />;
+    } else if (showComponent === 'Followings') {
+      component = <Followings logUsername={logUsername}  setShowComponent={setShowComponent} setUsername={setUsername} />;
+    } else if (showComponent === 'Profile') {
+      component = <Profile username={username} />;
+    } else if (showComponent === 'Register') {
+      component = <Register setLogUsername={setLogUsername} setShowComponent={setShowComponent} setUsername={setUsername} />;
+    } else if (showComponent === 'Login'){
+      component = <Login setLogUsername={setLogUsername} setShowComponent={setShowComponent} setUsername={setUsername} />; 
+    }
+  }
+
   return (
     <>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"></link>
       <div className="App">
-        <Login />
+        <Navbar username={logUsername} setUsername={setUsername} setShowComponent={setShowComponent} />
+        {component}
       </div>
     </>
-  );
+);
 }
 
 export default App;
