@@ -15,19 +15,19 @@ class User(AbstractUser):
             "following_num": self.following_num
         }
 
-# class Like(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "liked", null=False)
-#     liked_post_id = models.IntegerField(null=True, blank=True)
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "liked", null=False)
+    liked_post_id = models.IntegerField(null=True, blank=True)
 
-#     class Meta:
-#         unique_together = ('user', 'liked_post_id')
+    class Meta:
+        unique_together = ('user', 'liked_post_id')
 
-#     def serialize(self):
-#         return {
-#             "id": self.id,
-#             "username": self.user.username,
-#             "liked_post_id": self.liked_post_id
-#         }
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.user.username,
+            "liked_post_id": self.liked_post_id
+        }
 
 
 class Post(models.Model):
@@ -45,16 +45,16 @@ class Post(models.Model):
             "likes_num": self.likes_num,
         }
 
-# class Following(models.Model):
-#     follower_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "follows", null=False)
-#     following_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "followed", null=False)
+class Following(models.Model):
+    follower_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "follows", null=False)
+    following_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = "followed", null=False)
 
-#     class Meta:
-#         unique_together = ('follower_user', 'following_user')
+    class Meta:
+        unique_together = ('follower_user', 'following_user')
     
-#     def serialize(self):
-#         return {
-#             "id": self.id,
-#             "follower_user": self.follower_user.username,
-#             "following_username": self.following_user.username
-#         }
+    def serialize(self):
+        return {
+            "id": self.id,
+            "follower_user": self.follower_user.username,
+            "following_username": self.following_user.username
+        }
