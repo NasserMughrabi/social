@@ -1,7 +1,4 @@
 import React from 'react'
-import Navbar from './Navbar';
-import Followings from './Followings';
-import Login from './Login';
 import CSRFToken from './CSRFToken';
 import { useState, useRef } from 'react';
 

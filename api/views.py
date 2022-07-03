@@ -56,13 +56,6 @@ def follow(request):
 
 @csrf_exempt
 def like(request):
-    # data = json.loads(request.body)
-    # post_id = data.get("post_id", "")
-    # liked = Like.objects.get(user=request.user, liked_post_id=post_id)
-    # if(liked):
-    #     result = True
-    # else :
-    #     result = False
     all_liked = Like.objects.all()
     return JsonResponse([like.serialize() for like in all_liked], safe=False)
 

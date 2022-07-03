@@ -1,6 +1,5 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react';
-import Profile from './Profile';
 import CSRFToken from './CSRFToken';
 
 const Followings = ({logUsername, setShowComponent, setUsername}) => {
