@@ -28,7 +28,7 @@ const Navbar = ({username, setUsername, setShowComponent}) => {
     }
 
     return (
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav id='navbar' class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" onClick={brandClick}>Network</a>
             
             <div>

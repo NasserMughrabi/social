@@ -4,9 +4,17 @@ import Main from './components/Main';
 import Profile from './components/Profile';
 import Followings from './components/Followings';
 import Navbar from './components/Navbar';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import React from 'react';
+import icon from './favicon.png';
+
 
 function App() {
+
+  useEffect(() => {
+      const favicon = document.getElementById('favicon');
+      favicon.setAttribute('href', icon);
+  }, []);
 
   const [showComponent, setShowComponent] = useState('');
   const [username, setUsername] = useState('');
@@ -19,7 +27,7 @@ function App() {
     } else if (showComponent === 'Followings') {
       component = <Followings logUsername={logUsername}  setShowComponent={setShowComponent} setUsername={setUsername} />;
     } else if (showComponent === 'Profile') {
-      component = <Profile username={username} />;
+      component = <Profile logUsername={logUsername} username={username} />;
     } else if (showComponent === 'Register') {
       component = <Register setLogUsername={setLogUsername} setShowComponent={setShowComponent} setUsername={setUsername} />;
     } else if (showComponent === 'Login'){

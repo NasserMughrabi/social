@@ -63,6 +63,7 @@
   font-family: inherit;
   font-size: 19px;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .content {
@@ -76,7 +77,16 @@
 
 .like {
   float: left;
-  width: 6%;
+  width: 4%;
+  cursor: pointer;
+}
+
+.likes div {
+  font-family: inherit;
+  font-size: 19px;
+  font-weight: 700;
+  margin-top: -0.5px;
+  padding-left: 0%;
 }
 
 .edit {
@@ -98,4 +108,56 @@
   font-family: inherit;
   font-size: 28px;
   font-weight: bold;
+}
+
+#following-btn {
+  margin-top: 5px;
+  margin-left: 15px;
+}
+
+#navbar {
+  cursor: pointer;
+}
+
+
+@media (max-width: 300px) {
+
+  #post-submit {
+    margin-left: 42vw;
+  }
+
+  .like {
+    width: 12vw;
+  }
+}
+
+@media (min-width: 301px) {
+
+  #post-submit {
+    margin-left: 48vw;
+  }
+
+  .like {
+    width: 12vw;
+  }
+}
+
+@media (min-width: 500px) {
+  #post-submit {
+    margin-left: 56.5vw;
+  }
+
+  .like {
+    width: 12vw;
+  }
+}
+
+@media (min-width: 1000px) {
+  #post-submit {
+    margin-left: 58.5vw;
+  }
+
+  .like {
+    width: 4vw;
+  }
 }

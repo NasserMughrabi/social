@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import CSRFToken from './CSRFToken';
 
 const Main = ({logUsername, setShowComponent, setUsername}) => {
@@ -29,10 +30,11 @@ const Main = ({logUsername, setShowComponent, setUsername}) => {
         .then(response => response.json())
         .then(result => console.log(result))
         .catch(err => console.log(err));
+        contentEl.current.value = '';
         setShowComponent('Main');
     }
 
-
+    // handle likes
     const [allLiked, setAllLiked] = useState([]);
     const [liked, setLiked] = useState(false);
     useEffect(()=>{
@@ -69,7 +71,6 @@ const Main = ({logUsername, setShowComponent, setUsername}) => {
             .then(result => setLiked(true))
             .catch(err => console.log(err));
         }
-        
     }
     
 
@@ -93,6 +94,7 @@ const Main = ({logUsername, setShowComponent, setUsername}) => {
                     }
                 }
                 return (
+                    
                     <div key={id} className="post-div">
                         <div className="username" onClick={()=>{handleProfileClick(username)}}>
                             {username}
@@ -104,7 +106,7 @@ const Main = ({logUsername, setShowComponent, setUsername}) => {
                             {date_posted}  
                         </div>
                         <div className="like">
-                            {likedPost ? <button onClick={()=>{handleLike(id, 'unlike')}}>Unlike</button>:<button onClick={()=>{handleLike(id, 'like')}}>Like</button> }
+                            {likedPost ? <div onClick={()=>{handleLike(id, 'unlike')}}><AiFillHeart size={25} color={'red'} /></div>:<div onClick={()=>{handleLike(id, 'like')}}><AiOutlineHeart size={25}/></div> }
                         </div>
                         <div className="likes" >
                             <div>{likes_num}</div>

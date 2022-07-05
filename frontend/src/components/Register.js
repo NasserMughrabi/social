@@ -10,6 +10,7 @@ const Register = ({setLogUsername, setShowComponent, setUsername}) => {
     const passwordConfEl = useRef(null);
     const emailEl = useRef(null);
     const [matchPass, setMatchPass] = useState(true);
+    const [usernameDuplicate, setUsernameDuplicate] = useState(false);
     const [registerStatus, setRegisterStatus]  = useState('');
     const [user, setUser] = useState('');
 
@@ -19,11 +20,11 @@ const Register = ({setLogUsername, setShowComponent, setUsername}) => {
     const handleSubmit = (e) => {
         // fetch data and post to the server database
         e.preventDefault();
-        const username = usernameEl.current.value;
+        const username = usernameEl.current.value.trim().toLowerCase();
         setUser(username);
         const password = passwordEl.current.value;
         const passwordConf = passwordConfEl.current.value;
-        const email = emailEl.current.value;
+        const email = emailEl.current.value.trim().toLowerCase();
         if(password !== passwordConf) {
             setMatchPass(false);
             return;
@@ -37,7 +38,14 @@ const Register = ({setLogUsername, setShowComponent, setUsername}) => {
                 })
             })
             .then(response => response.json())
-            .then(result => {setRegisterStatus(result)});
+            .then(result => {
+                setRegisterStatus(result)
+                if(result === 'duplicate_username'){
+                    setUsernameDuplicate(true);
+                }
+            });
+        
+         
     }
 
     if(registerStatus === 'success'){
@@ -49,7 +57,8 @@ const Register = ({setLogUsername, setShowComponent, setUsername}) => {
     return (
         <>
             <h2>Register</h2>
-            {matchPass || <div>Passwords must match.</div> }
+            {matchPass || <div style={{color: 'red'}}>Passwords must match.</div> }
+            {usernameDuplicate && <div style={{color: 'red'}}>username is taken.</div> }
             <form action="" onClick={handleSubmit} method="post">
                 <CSRFToken />
                 <div class="form-group">

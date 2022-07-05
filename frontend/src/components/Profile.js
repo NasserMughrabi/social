@@ -1,7 +1,13 @@
 import React from 'react'
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { useState, useEffect } from 'react';
 
-const Profile = ({username}) => {
+const Profile = ({logUsername, username}) => {
+   
+    let myProfile = false;
+    if(logUsername === username){
+        myProfile = true;
+    }
 
     const [profile, setProfile] = useState(false);
     useEffect(() => {
@@ -76,6 +82,42 @@ const Profile = ({username}) => {
         
     }
 
+    // handle likes
+    const [allLiked, setAllLiked] = useState([]);
+    const [liked, setLiked] = useState(false);
+    useEffect(()=>{
+        fetch('api/like')
+            .then(response => response.json())
+            .then(result => setAllLiked(result))
+            .catch(err => console.log(err));
+    }, [allLiked])
+
+    const handleLike = (id, text) => {
+        if(text === 'unlike'){
+            // remove from Like table
+            fetch('api/remove_like', {
+                method: 'POST',
+                body: JSON.stringify({
+                    post_id: id,
+                })
+            })
+            .then(response => response.json())
+            .then(result => setLiked(false))
+            .catch(err => console.log(err));
+            
+        }  else {
+            // add to Like table/model
+            fetch('api/add_like', {
+                method: 'POST',
+                body: JSON.stringify({
+                    post_id: id,
+                })
+            })
+            .then(response => response.json())
+            .then(result => setLiked(true))
+            .catch(err => console.log(err));
+        }
+    }
     return (
         <>
             <div key={profile.id} id="profile">
@@ -84,12 +126,18 @@ const Profile = ({username}) => {
                 <div id="followers-num-${username}" class="profile-follow-num">{profile.followers_num}</div>
                 <div class="profile-follow-label">Followings:</div>
                 <div id="followings-num-${username}" class="profile-follow-num">{profile.following_num}</div>
-                {following ? <button onClick={handleFollow}>Unfollow</button> : <button onClick={handleFollow}>Follow</button>}
+                {following ? myProfile ? '':<button className="btn btn-primary mb-2" id='following-btn' onClick={handleFollow}>Unfollow</button> :  myProfile ? '':<button className="btn btn-primary mb-2" id='following-btn' onClick={handleFollow}>Follow</button>}
             </div>
             <div id="followings-posts">
-                {
-                profilePosts.map(post => {
+                {profilePosts.map(post => {
                     const {id, username, content, date_posted, likes_num} = post;
+                    let likedPost = false;
+                    for(let i=0; i<allLiked.length; i++){
+                        if(allLiked[i].liked_post_id === id && allLiked[i].username === logUsername){
+                            likedPost = true;
+                            break;
+                        }
+                    }
                     return (
                         <div key={id} className="post-div">
                             <div className="username">
@@ -102,15 +150,14 @@ const Profile = ({username}) => {
                                 {date_posted}  
                             </div>
                             <div className="like">
-                                <button>Like</button>
+                                {likedPost ? <div onClick={()=>{handleLike(id, 'unlike')}}><AiFillHeart size={25} color={'red'} /></div>:<div onClick={()=>{handleLike(id, 'like')}}><AiOutlineHeart size={25}/></div> }
                             </div>
                             <div className="likes" >
                                 <div>{likes_num}</div>
                             </div>
                         </div>
                     );
-                })
-                }
+                })}
             </div>
         </>
     );

@@ -1,39 +1,41 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react';
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import CSRFToken from './CSRFToken';
 
 const Followings = ({logUsername, setShowComponent, setUsername}) => {
 
-  const [followingsPosts, setFollowingsPosts] = useState([]);
-  useEffect(() => {
-        fetch('api/followingsposts')
+    const [followingsPosts, setFollowingsPosts] = useState([]);
+    useEffect(() => {
+            fetch('api/followingsposts')
+            .then(response => response.json())
+            .then(posts => {setFollowingsPosts(posts);})
+            .catch(err => console.log(err));
+    }, [followingsPosts])
+
+    const handleProfileClick = (username) => {
+        setUsername(username);
+        setShowComponent('Profile');
+    }
+
+    const contentEl = useRef(null);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        fetch('api/new_post', {
+            method: 'POST',
+            body: JSON.stringify({
+                content: contentEl.current.value  
+            })
+        })
         .then(response => response.json())
-        .then(posts => {setFollowingsPosts(posts);})
+        .then(result => console.log(result))
         .catch(err => console.log(err));
-  }, [followingsPosts])
+        contentEl.current.value = '';
+        setShowComponent('Followings');
+    }
 
-  const handleProfileClick = (username) => {
-      setUsername(username);
-      setShowComponent('Profile');
-  }
-
-  const contentEl = useRef(null);
-  const handleSubmit = (e) => {
-      e.preventDefault();
-      fetch('api/new_post', {
-          method: 'POST',
-          body: JSON.stringify({
-              content: contentEl.current.value  
-          })
-      })
-      .then(response => response.json())
-      .then(result => console.log(result))
-      .catch(err => console.log(err));
-      setShowComponent('Followings');
-  }
-
-  // handle likes
-  const [allLiked, setAllLiked] = useState([]);
+    // handle likes
+    const [allLiked, setAllLiked] = useState([]);
     const [liked, setLiked] = useState(false);
     useEffect(()=>{
         fetch('api/like')
@@ -104,7 +106,7 @@ const Followings = ({logUsername, setShowComponent, setUsername}) => {
                       {date_posted}  
                   </div>
                   <div className="like">
-                    {likedPost ? <button onClick={()=>{handleLike(id, 'unlike')}}>Unlike</button>:<button onClick={()=>{handleLike(id, 'like')}}>Like</button> }
+                      {likedPost ? <div onClick={()=>{handleLike(id, 'unlike')}}><AiFillHeart size={25} color={'red'} /></div>:<div onClick={()=>{handleLike(id, 'like')}}><AiOutlineHeart size={25}/></div> }
                   </div>
                   <div className="likes" >
                       <div>{likes_num}</div>

@@ -15,7 +15,7 @@ const Login = ({setLogUsername, setShowComponent, setUsername}) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const username = usernameEl.current.value;
+        const username = usernameEl.current.value.trim().toLowerCase();
         setUser(username);
         const password = passwordEl.current.value;
         fetch('api/login', {
