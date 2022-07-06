@@ -59,7 +59,7 @@ const Register = ({setLogUsername, setShowComponent, setUsername}) => {
             <h2>Register</h2>
             {matchPass || <div style={{color: 'red'}}>Passwords must match.</div> }
             {usernameDuplicate && <div style={{color: 'red'}}>username is taken.</div> }
-            <form action="" onClick={handleSubmit} method="post">
+            <form action="" onSubmit={handleSubmit} method="post">
                 <CSRFToken />
                 <div class="form-group">
                     <input ref={usernameEl} class="form-control" autofocus type="text" name="username" placeholder="Username"></input>
